@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script src="./lib/main.js" type="module"></script>
+    <title>Main</title>
+</head>
+
+<body>
+</body>
+<script type="module">
+(async () => {
+	const base = "./";
+
+	const headers = new Headers();
+	const init = {
+		method: "GET",
+		headers: headers,
+		mode: "no-cors",
+		cache: "reload"
+	};
+
+	const html = await window.fetch(`${base}/init.html`,init)
+	.then((response) => {
+		if(response.status === 200) {
+			return response.text();
+		} else {
+			throw "wrong status";
+		}
+	});
+
+	const regex = new RegExp("`","g");
+	const env = {};
+	window.document.body.innerHTML = eval("`"+html.replace(regex,"\\`")+"`");
+
+	const webBodyLoad = new Event("webBodyLoad",{
+		bubbles: false,
+		cancelable: false,
+		composed: false
+	});
+	window.dispatchEvent(webBodyLoad);
+})();
+</script>
+</html>
